@@ -1,0 +1,29 @@
+<script>
+var ctx = document.getElementById("barChart");
+var barChart = new Chart (ctx, {
+    type: 'bar',
+    data: {
+        labels: ["Dog", "Cat", "Pangolin"],
+        datasets: [{
+			      backgroundColor: '#00ff00',
+            label: '# of Votes 2016',
+            data: [12, 19, 3]
+            }]
+		}
+});
+
+function addData(chart, label, color, data) {
+		chart.data.datasets.push({
+	    label: label,
+      backgroundColor: color,
+      data: data
+    });
+    chart.update();
+}
+
+// inserting the new dataset after 3 seconds
+setTimeout(function() {
+	addData(barChart, '# of Votes 2017', '#ff0000', [16, 14, 8]);
+}, 3000);
+</script>
+<canvas id="barChart" width="400" height="400"></canvas>

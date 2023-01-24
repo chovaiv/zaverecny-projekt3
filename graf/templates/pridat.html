@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+        <form method="POST">
+                <table>
+                        <tr>{{ form }}</tr>
+                </table>
+        {% csrf_token %}
+        <td><input type="submit" value="Přidat objekt"></td>
+        </form>
+{% endblock %}

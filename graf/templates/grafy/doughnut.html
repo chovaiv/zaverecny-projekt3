@@ -1,0 +1,107 @@
+{% extends 'base.html'%}
+{% block content %}
+      {% include 'navbar.html' %}
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+
+  <body>
+
+  <div>
+                                <canvas id="myChart" width="400" height="150"></canvas>
+        </div>
+    <script>
+
+
+
+const data = {
+      labels: [{% for data in g %} '{{ data.jmeno_objektu }}', {% endfor %}],
+    datasets: [{
+          label: "",
+          data: [{% for data in g %} {{ data.pocet_objektu }}, {% endfor %}],
+          backgroundColor: [{% for data in g %} '{{ data.color }}', {% endfor %}],
+          borderColor: [{% for data in g %} '{{ data.borderColor }}', {% endfor %}],
+          borderWidth: 1
+      }, ]
+    };
+
+
+
+    const config = {
+      type: 'doughnut',
+      data,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    };
+
+    const myChart = new Chart(
+      document.getElementById('myChart'),
+      config
+    );
+    </script>
+    <style>
+table, th, tr, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+input {
+      border: none;
+}
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}
+</style>
+ <div>
+
+
+<table border="4">
+    {% for data in g %}
+    <tr>
+    </tr>
+    <tr>
+        <form action="upravit_objekt/{{ data.id }}" method="post">
+        {% csrf_token %}
+        <td><input name="jmeno_objektu" value="{{data.jmeno_objektu}}"></td>
+        <td><input name="pocet_objektu" type="number" value="{{data.pocet_objektu}}"></td>
+        <td><input name="color" type="color" value="{{data.color}}"></td>
+        <td><input name="borderColor" type="color" value="{{data.borderColor}}"></td>
+        <td><input type="submit" value="Změnit"></td>
+        </form>
+        <td><a href="odstranit/{{data.id}}/">Odstranit</a></td>
+    </tr>
+    {% endfor %}
+    <tr>
+            <form action="create/" method="post">
+        {% csrf_token %}
+        <td><input name="jmeno_objektu" placeholder="Jméno objektu"></td>
+        <td><input name="pocet_objektu" type="number" placeholder="Počet objektů"></td>
+        <td><input name="color" type="color" value="#FF0000"></td>
+        <td><input name="borderColor" type="color" value="#FF0000"></td>
+        <td><input type="submit" value="Přidat objekt"></td>
+        </form>
+    </tr>
+    </table>
+<script>
+        function download() {
+var download = document.getElementById("download");
+var image = document.getElementById("myChart").toDataURL("image/png")
+    .replace("image/png", "image/octet-stream");
+download.setAttribute("href", image);
+
+}
+
+    </script>
+<a id="download" download="graf.png">
+<button type="button" onClick="download()">Stáhnout jako png</button>
+</a>
+</div>
+{% endblock content %}

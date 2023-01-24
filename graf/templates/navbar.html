@@ -1,0 +1,40 @@
+<nav class="navbar navbar-expand-sm navbar-light bg-light">
+    <a class="nav-link" href="../"><h3>Charts!</h3></a>
+
+    <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#collapsibleNavId"
+            aria-controls="collapsibleNavId" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="collapsibleNavId">
+        <ul class="navbar-nav mt-2 mt-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="/admin">Admin site</a>
+            </li>
+            <li class="nav-item">
+                {% if user.is_authenticated %}
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <span class="input-icon"><i class="fas fa-user"></i></span>
+
+                        {{ user.get_username }}
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="{% url 'logout' %}?next={{ request.path }}">Logout</a>
+                    </div>
+
+                    {% else %}
+                    <div>
+                        <button class="btn" type="button" data-toggle="modal" aria-haspopup="true"
+                                aria-expanded="false" data-target="#myModal">Login
+                        </button>
+                        {% include 'registration/login.html'%}
+                    </div>
+                    {% endif %}
+
+
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>

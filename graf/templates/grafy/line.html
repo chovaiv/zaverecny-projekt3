@@ -1,0 +1,151 @@
+{% extends 'base.html'%}
+{% block content %}
+{% include 'navbar.html' %}
+
+
+</head>
+
+<body>
+  <div class="chartCard">
+    <div class="chartBox">
+      <canvas id="myChart"></canvas>
+      <a id="download" download="graf.png">
+        <button type="button" onClick="download()">Stáhnout jako png</button>
+      </a>
+      <button onclick="addDataset()">Přidat dataset</button>
+      <button onclick="removeDataset()">Odstranit dataset</button>
+
+    </div>
+  </div>
+  <script>
+
+
+    const data = {
+      labels: [{% for data in b %} '{{ data.label }}', {% endfor %}],
+    datasets: [{
+      label: "",
+      data: [{% for data in b %} {{ data.pocet }}, {% endfor %}],
+          fill: false,
+      backgroundColor: [{% for data in b %} '#FF3399', {% endfor %}],
+    borderColor: [{% for data in b %} '#FF3399', {% endfor %}],
+    borderWidth: 1
+      }, ]
+    };
+
+    const config = {
+      type: 'line',
+      data,
+      options: {
+        scales: {
+          yAxes: [{
+            display: true,
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    };
+
+    const myChart = new Chart(
+      document.getElementById('myChart'),
+      config
+    );
+    let randomColor;
+    let pcdts = 0;
+    function addDataset() {
+      randomColor = Math.floor(Math.random() * 16777215).toString(16);
+      pcdts++;
+      const newDataset = {
+
+    label: '',
+    data: [{% for data in b %} {{ data.pocet }} + pcdts, {% endfor %}],
+        fill: false,
+    backgroundColor: "#" + randomColor,
+      borderColor: "#" + randomColor,
+        borderWidth: 1
+      };
+    myChart.data.datasets.push(newDataset);
+    myChart.update();
+    createTable();
+    };
+
+    function removeDataset() {
+      pcdts--;
+      myChart.data.datasets.pop();
+      myChart.update();
+      createTable();
+    };
+
+
+    function createTable() {
+
+      const chartBox = document.querySelector('.chartBox');
+      const tableDiv = document.createElement('div');
+
+      const table = document.createElement('table');
+      tableDiv.setAttribute('id', 'tableDiv');
+
+      const thead = table.createTHead();
+      thead.insertRow(0);
+      for (let i = 0; i < data.labels.length; i++) {
+        thead.rows[0].insertCell(i).innerText = data.labels[i];
+      };
+
+      const tbody = table.createTBody();
+      data.datasets.map((dataset, index) => {
+        tbody.insertRow(index);
+        for (let i = 0; i < data.datasets[0].data.length; i++) {
+          tbody.rows[index].insertCell(i).innerHTML = '<input id= " "input" + [i]" value=" dataset.data[i] ">';
+
+          };
+        tbody.rows[index].insertCell(0).innerText = dataset.label;
+      })
+
+      chartBox.appendChild(tableDiv);
+      tableDiv.appendChild(table);
+    };
+
+    createTable();
+
+  </script>
+  <table>
+    {% for data in b %}
+
+    <tr>
+      <form action="upravit_objekt/{{ data.id }}" method="post">
+        {% csrf_token %}
+        <td><input name="label" value="{{data.label }}"></td>
+        <td></td>
+        <td><input name="jmeno" value="{{data.jmeno }}"></td>
+        <td><input name="pocet" type="number" value="{{data.pocet}}"></td>
+        <td><input type="submit" value="Změnit"></td>
+        <td><a href="odstranit/{{data.id}}/">Odstranit</a></td>
+      </form>
+    </tr>
+    {% endfor %}
+    <tr>
+      <form action="createBar/" method="post">
+        {% csrf_token %}
+        <td></td>
+        <td></td>
+        <td><input name="jmeno_objektu" placeholder="Jméno objektu"></td>
+        <td><input name="pocet_objektu" type="number" placeholder="Počet objektů"></td>
+        <td><input type="submit" value="Přidat objekt"></td>
+      </form>
+    </tr>
+  </table>
+  <script>
+    function download() {
+      var download = document.getElementById("download");
+      var image = document.getElementById("myChart").toDataURL("image/png")
+        .replace("image/png", "image/octet-stream");
+      download.setAttribute("href", image);
+
+    }
+
+  </script>
+
+
+
+  {% endblock content %}
